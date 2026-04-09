@@ -1,0 +1,436 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .page { padding: 1.5rem 0; max-width: 860px; }
+  .page-icon { font-size: 40px; margin-bottom: 0.5rem; display: block; }
+  .page-title { font-size: 28px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+  .page-sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.5rem; }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.25rem 0; }
+  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .nav-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .nav-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.125rem; cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; align-items: flex-start; gap: 10px; }
+  .nav-card:hover { border-color: var(--color-border-secondary); background: var(--color-background-secondary); }
+  .nav-card.active { border-color: #5DCAA5; background: #E1F5EE; }
+  .nav-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .nav-card-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .nav-card.active .nav-card-title { color: #0F6E56; }
+  .nav-card-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.4; }
+  .nav-card.active .nav-card-desc { color: #1D9E75; }
+  .content-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; }
+  .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+  .panel-emoji { font-size: 20px; }
+  .panel-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+  .panel-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #E1F5EE; color: #0F6E56; margin-left: auto; }
+  .hidden { display: none; }
+
+  /* Weekly Geral */
+  .team-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .team-table th { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-align: left; padding: 0 8px 8px; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .team-table td { padding: 10px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: top; color: var(--color-text-primary); }
+  .team-table tr:last-child td { border-bottom: none; }
+  .person-cell { display: flex; align-items: center; gap: 8px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .av-teal { background: #9FE1CB; color: #085041; }
+  .av-purple { background: #CECBF6; color: #3C3489; }
+  .av-coral { background: #F5C4B3; color: #712B13; }
+  .av-blue { background: #B5D4F4; color: #0C447C; }
+  .av-amber { background: #FAC775; color: #633806; }
+  .av-pink { background: #F4C0D1; color: #72243E; }
+  .role-tag { font-size: 11px; color: var(--color-text-secondary); }
+  .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; }
+  .dot-green { background: #63991b; }
+  .dot-amber { background: #ba7517; }
+  .dot-red { background: #e24b4a; }
+  .todo-box { margin-top: 1rem; background: var(--color-background-secondary); border-radius: var(--border-radius-md); border-left: 3px solid #5DCAA5; padding: 0.75rem 1rem; }
+  .todo-title { font-size: 12px; font-weight: 500; color: #0F6E56; margin-bottom: 6px; }
+  .todo-item { font-size: 12px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 6px; padding: 3px 0; }
+  .checkbox { width: 12px; height: 12px; border: 0.5px solid var(--color-border-secondary); border-radius: 3px; flex-shrink: 0; background: var(--color-background-primary); }
+
+  /* Weekly Report */
+  .report-week-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .week-label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .deadline-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--color-background-warning); color: var(--color-text-warning); }
+  .report-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 1rem; }
+  .kpi-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem; }
+  .kpi-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+  .kpi-val { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .kpi-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .person-report-row { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 8px; overflow: hidden; }
+  .person-report-head { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--color-background-secondary); cursor: pointer; }
+  .person-report-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .expand-icon { margin-left: auto; font-size: 12px; color: var(--color-text-secondary); }
+  .person-report-body { padding: 10px 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .report-col-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; font-weight: 500; }
+  .report-col-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; font-style: italic; }
+
+  /* Weeklys Específicas */
+  .team-tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+  .team-tab { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--color-border-tertiary); cursor: pointer; color: var(--color-text-secondary); background: transparent; }
+  .team-tab.active { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; }
+  .meeting-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.875rem 1rem; margin-bottom: 8px; }
+  .meeting-date { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+  .meeting-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+  .meeting-notes { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; font-style: italic; }
+  .add-note-btn { width: 100%; padding: 8px; border: 0.5px dashed var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-secondary); font-size: 13px; cursor: pointer; margin-top: 4px; }
+  .add-note-btn:hover { background: var(--color-background-secondary); }
+
+  /* Follow-up IA */
+  .kanban { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .kanban-col { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem; }
+  .kanban-col-title { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .col-count { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 20px; font-size: 10px; padding: 1px 6px; color: var(--color-text-secondary); }
+  .kanban-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.625rem 0.75rem; margin-bottom: 6px; }
+  .kanban-card-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .kanban-card-sub { font-size: 11px; color: var(--color-text-secondary); }
+  .kanban-tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; margin-top: 5px; }
+  .tag-teal { background: #9FE1CB; color: #085041; }
+  .tag-amber { background: #FAC775; color: #633806; }
+  .tag-purple { background: #CECBF6; color: #3C3489; }
+</style>
+
+<div class="page">
+  <span class="page-icon">📋</span>
+  <h1 class="page-title">Hub Semanal — R&CI e Compliance</h1>
+  <p class="page-sub">Gestão assíncrona · Atualização semanal · Sexta-feira até o final do dia</p>
+  <hr class="divider">
+  <p class="section-label">Navegação</p>
+  <div class="nav-grid">
+    <div class="nav-card active" onclick="showPanel('weekly-geral', this)">
+      <span class="nav-icon">📌</span>
+      <div>
+        <div class="nav-card-title">Weekly Geral</div>
+        <div class="nav-card-desc">Status e prioridades por pessoa</div>
+      </div>
+    </div>
+    <div class="nav-card" onclick="showPanel('weekly-report', this)">
+      <span class="nav-icon">📊</span>
+      <div>
+        <div class="nav-card-title">Weekly Report</div>
+        <div class="nav-card-desc">Indicadores e KPIs da semana</div>
+      </div>
+    </div>
+    <div class="nav-card" onclick="showPanel('weeklys-esp', this)">
+      <span class="nav-icon">🗂️</span>
+      <div>
+        <div class="nav-card-title">Weeklys Específicas</div>
+        <div class="nav-card-desc">R&CI e Compliance / PLD-FT</div>
+      </div>
+    </div>
+    <div class="nav-card" onclick="showPanel('followup-ia', this)">
+      <span class="nav-icon">🤖</span>
+      <div>
+        <div class="nav-card-title">Follow-up: Ações de IA</div>
+        <div class="nav-card-desc">Automações e projetos de AI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel: Weekly Geral -->
+  <div class="content-panel" id="weekly-geral">
+    <div class="panel-header">
+      <span class="panel-emoji">📌</span>
+      <span class="panel-title">Weekly Geral — Status e Prioridades</span>
+      <span class="panel-badge">Semana 15 · 2025</span>
+    </div>
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th style="width:180px">Pessoa</th>
+          <th>Demandas em andamento</th>
+          <th style="width:100px">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <div class="avatar av-teal">TH</div>
+              <div>
+                <div style="font-size:13px;font-weight:500">Thabata</div>
+                <div class="role-tag">Líder</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;color:var(--color-text-secondary)">Revisão de políticas internas · Reunião comitê · Onboarding novo processo</td>
+          <td><span class="status-dot dot-amber"></span><span style="font-size:12px;color:var(--color-text-secondary)">Em curso</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <div class="avatar av-purple">HO</div>
+              <div>
+                <div style="font-size:13px;font-weight:500">Hosana</div>
+                <div class="role-tag">GRC</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;color:var(--color-text-secondary)">Atualização de controles · Mapeamento de riscos Q2</td>
+          <td><span class="status-dot dot-green"></span><span style="font-size:12px;color:var(--color-text-secondary)">No prazo</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <div class="avatar av-coral">JE</div>
+              <div>
+                <div style="font-size:13px;font-weight:500">Jéssica</div>
+                <div class="role-tag">GRC</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;color:var(--color-text-secondary)">Relatório GRC mensal · Auditoria pendente de evidências</td>
+          <td><span class="status-dot dot-red"></span><span style="font-size:12px;color:var(--color-text-secondary)">Bloqueado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <div class="avatar av-blue">AM</div>
+              <div>
+                <div style="font-size:13px;font-weight:500">Amanda</div>
+                <div class="role-tag">Regulatório</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;color:var(--color-text-secondary)">Análise de circular BACEN · Adequação normativa</td>
+          <td><span class="status-dot dot-amber"></span><span style="font-size:12px;color:var(--color-text-secondary)">Em curso</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <div class="avatar av-amber">RA</div>
+              <div>
+                <div style="font-size:13px;font-weight:500">Rafaela</div>
+                <div class="role-tag">Compliance</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;color:var(--color-text-secondary)">Revisão de código de conduta · Treinamento obrigatório</td>
+          <td><span class="status-dot dot-green"></span><span style="font-size:12px;color:var(--color-text-secondary)">No prazo</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <div class="avatar av-pink">JU</div>
+              <div>
+                <div style="font-size:13px;font-weight:500">Julia</div>
+                <div class="role-tag">PLD</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;color:var(--color-text-secondary)">Monitoramento de operações suspeitas · Atualização de lista PEP</td>
+          <td><span class="status-dot dot-green"></span><span style="font-size:12px;color:var(--color-text-secondary)">No prazo</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="todo-box">
+      <div class="todo-title">✅ TO-DO Thabata — validações e revisões pendentes</div>
+      <div class="todo-item"><div class="checkbox"></div>Revisar evidências da auditoria (Jéssica) — prazo: 18/04</div>
+      <div class="todo-item"><div class="checkbox"></div>Validar análise circular BACEN (Amanda)</div>
+      <div class="todo-item"><div class="checkbox"></div>Aprovar relatório GRC mensal antes do envio</div>
+    </div>
+  </div>
+
+  <!-- Panel: Weekly Report -->
+  <div class="content-panel hidden" id="weekly-report">
+    <div class="panel-header">
+      <span class="panel-emoji">📊</span>
+      <span class="panel-title">Weekly Report — Indicadores e KPIs</span>
+      <span class="panel-badge deadline-badge">Prazo: toda sexta</span>
+    </div>
+    <div class="report-week-bar">
+      <span class="week-label">Semana 15 · 07–11 abr 2025</span>
+    </div>
+    <div class="report-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Demandas concluídas</div>
+        <div class="kpi-val">12</div>
+        <div class="kpi-sub">+3 vs semana ant.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Bloqueios ativos</div>
+        <div class="kpi-val">2</div>
+        <div class="kpi-sub">Aguardando validação</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Itens inesperados</div>
+        <div class="kpi-val">3</div>
+        <div class="kpi-sub">Surgidos na semana</div>
+      </div>
+    </div>
+    <p class="section-label" style="margin-top:0.25rem">Atualização individual</p>
+    <div class="person-report-row">
+      <div class="person-report-head" onclick="toggleReport(this)">
+        <div class="avatar av-purple" style="width:24px;height:24px;font-size:10px">HO</div>
+        <span class="person-report-name">Hosana · GRC</span>
+        <span class="expand-icon">▾</span>
+      </div>
+      <div class="person-report-body">
+        <div><div class="report-col-label">O que andou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que travou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que surgiu</div><div class="report-col-text">Preencha aqui…</div></div>
+      </div>
+    </div>
+    <div class="person-report-row">
+      <div class="person-report-head" onclick="toggleReport(this)">
+        <div class="avatar av-coral" style="width:24px;height:24px;font-size:10px">JE</div>
+        <span class="person-report-name">Jéssica · GRC</span>
+        <span class="expand-icon">▾</span>
+      </div>
+      <div class="person-report-body">
+        <div><div class="report-col-label">O que andou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que travou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que surgiu</div><div class="report-col-text">Preencha aqui…</div></div>
+      </div>
+    </div>
+    <div class="person-report-row">
+      <div class="person-report-head" onclick="toggleReport(this)">
+        <div class="avatar av-blue" style="width:24px;height:24px;font-size:10px">AM</div>
+        <span class="person-report-name">Amanda · Regulatório</span>
+        <span class="expand-icon">▾</span>
+      </div>
+      <div class="person-report-body">
+        <div><div class="report-col-label">O que andou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que travou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que surgiu</div><div class="report-col-text">Preencha aqui…</div></div>
+      </div>
+    </div>
+    <div class="person-report-row">
+      <div class="person-report-head" onclick="toggleReport(this)">
+        <div class="avatar av-amber" style="width:24px;height:24px;font-size:10px">RA</div>
+        <span class="person-report-name">Rafaela · Compliance</span>
+        <span class="expand-icon">▾</span>
+      </div>
+      <div class="person-report-body">
+        <div><div class="report-col-label">O que andou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que travou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que surgiu</div><div class="report-col-text">Preencha aqui…</div></div>
+      </div>
+    </div>
+    <div class="person-report-row">
+      <div class="person-report-head" onclick="toggleReport(this)">
+        <div class="avatar av-pink" style="width:24px;height:24px;font-size:10px">JU</div>
+        <span class="person-report-name">Julia · PLD</span>
+        <span class="expand-icon">▾</span>
+      </div>
+      <div class="person-report-body">
+        <div><div class="report-col-label">O que andou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que travou</div><div class="report-col-text">Preencha aqui…</div></div>
+        <div><div class="report-col-label">O que surgiu</div><div class="report-col-text">Preencha aqui…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel: Weeklys Específicas -->
+  <div class="content-panel hidden" id="weeklys-esp">
+    <div class="panel-header">
+      <span class="panel-emoji">🗂️</span>
+      <span class="panel-title">Weeklys Específicas</span>
+    </div>
+    <div class="team-tabs">
+      <button class="team-tab active" onclick="switchTeam('rci', this)">R&CI</button>
+      <button class="team-tab" onclick="switchTeam('comp', this)">Compliance / PLD-FT</button>
+    </div>
+    <div id="tab-rci">
+      <div class="meeting-card">
+        <div class="meeting-date">07 abr 2025 · Agenda opcional</div>
+        <div class="meeting-title">Alinhamento R&CI — controles Q2</div>
+        <div class="meeting-notes">Participantes: Hosana, Jéssica, Thabata · Principais pontos: revisão do cronograma de auditoria, definição de responsáveis por evidências, próximos passos com a área de TI.</div>
+      </div>
+      <div class="meeting-card">
+        <div class="meeting-date">31 mar 2025 · Agenda opcional</div>
+        <div class="meeting-title">Revisão de mapeamento de riscos</div>
+        <div class="meeting-notes">Atualização do mapa de riscos operacionais. Pendência: validação com diretoria prevista para 14/04.</div>
+      </div>
+      <button class="add-note-btn">+ Adicionar registro de reunião</button>
+    </div>
+    <div id="tab-comp" class="hidden">
+      <div class="meeting-card">
+        <div class="meeting-date">08 abr 2025 · Agenda opcional</div>
+        <div class="meeting-title">Alinhamento Compliance / PLD-FT</div>
+        <div class="meeting-notes">Participantes: Rafaela, Julia, Thabata · Discussão sobre atualização de política PLD, novos requisitos normativos e próxima capacitação obrigatória.</div>
+      </div>
+      <button class="add-note-btn">+ Adicionar registro de reunião</button>
+    </div>
+  </div>
+
+  <!-- Panel: Follow-up IA -->
+  <div class="content-panel hidden" id="followup-ia">
+    <div class="panel-header">
+      <span class="panel-emoji">🤖</span>
+      <span class="panel-title">Follow-up: Ações de IA</span>
+    </div>
+    <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem">Gestão de projetos de automação e uso de inteligência artificial na área.</p>
+    <div class="kanban">
+      <div class="kanban-col">
+        <div class="kanban-col-title">Backlog <span class="col-count">3</span></div>
+        <div class="kanban-card">
+          <div class="kanban-card-title">Automação de relatórios GRC</div>
+          <div class="kanban-card-sub">Hosana · Jéssica</div>
+          <span class="kanban-tag tag-purple">Planejamento</span>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-title">Triagem de circulares regulatórias</div>
+          <div class="kanban-card-sub">Amanda</div>
+          <span class="kanban-tag tag-purple">Planejamento</span>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-title">Monitoramento PLD com IA</div>
+          <div class="kanban-card-sub">Julia</div>
+          <span class="kanban-tag tag-purple">Planejamento</span>
+        </div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-title">Em andamento <span class="col-count">2</span></div>
+        <div class="kanban-card">
+          <div class="kanban-card-title">Weekly assíncrona no Notion</div>
+          <div class="kanban-card-sub">Thabata · Time completo</div>
+          <span class="kanban-tag tag-amber">Implementando</span>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-title">Análise de contratos com LLM</div>
+          <div class="kanban-card-sub">Rafaela</div>
+          <span class="kanban-tag tag-amber">Piloto</span>
+        </div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-title">Concluído <span class="col-count">1</span></div>
+        <div class="kanban-card">
+          <div class="kanban-card-title">Mapeamento de oportunidades de automação</div>
+          <div class="kanban-card-sub">Time completo</div>
+          <span class="kanban-tag tag-teal">Entregue</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPanel(id, card) {
+  document.querySelectorAll('.content-panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.querySelectorAll('.nav-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+}
+function toggleReport(head) {
+  const body = head.nextElementSibling;
+  const icon = head.querySelector('.expand-icon');
+  if (body.style.display === 'none') {
+    body.style.display = 'grid';
+    icon.textContent = '▾';
+  } else {
+    body.style.display = 'none';
+    icon.textContent = '▸';
+  }
+}
+function switchTeam(id, btn) {
+  document.querySelectorAll('.team-tabs .team-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id === 'rci') {
+    document.getElementById('tab-rci').classList.remove('hidden');
+    document.getElementById('tab-comp').classList.add('hidden');
+  } else {
+    document.getElementById('tab-comp').classList.remove('hidden');
+    document.getElementById('tab-rci').classList.add('hidden');
+  }
+}
+</script>
